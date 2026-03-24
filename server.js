@@ -17,7 +17,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://quan-ly-kho-hang-chi-bui.vercel.app",
+    origin: "https://quan-ly-kho-hang-uno.vercel.app",
     credentials: true,
   })
 );
