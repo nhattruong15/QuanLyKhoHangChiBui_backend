@@ -6,6 +6,7 @@ import productRoutes from "./routes/productRoutes.js";
 import warehouseRouter from "./routes/warehouseRouter.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 import customerRoutes from "./routes/customerRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -17,8 +18,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://quan-ly-kho-hang-uno.vercel.app",
-    credentials: true,
+    origin: "*",
+    // credentials: true,
   })
 );
 app.use(express.json());
@@ -45,6 +46,7 @@ app.use("/api/warehouse", protect, warehouseRouter);
 app.use("/api/categories", protect, categoryRoutes);
 app.use("/api/orders", protect, orderRoutes);
 app.use("/api/customers", protect, customerRoutes);
+app.use("/api/appointments", protect, appointmentRoutes);
 
 // ─── Start Server ─────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
