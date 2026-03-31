@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
     customerName: { type: String, required: true },
     orderDate: { type: Date, required: true },
     items: [orderItemSchema],
+    totalAmount: { type: Number, default: 0 },
     note: { type: String },
     status: {
       type: String,

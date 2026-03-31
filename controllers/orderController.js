@@ -62,6 +62,30 @@ export const deleteOrder = async (req, res) => {
   }
 };
 
+// UPDATE order (full edit)
+export const updateOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Không tìm thấy đơn hàng" });
+    if (order.status === "Đã xuất thành công") {
+      return res.status(400).json({ success: false, message: "Không thể sửa đơn đã xuất thành công" });
+    }
+
+    const { customerName, orderDate, note, items, totalAmount } = req.body;
+    if (customerName !== undefined) order.customerName = customerName;
+    if (orderDate !== undefined) order.orderDate = orderDate;
+    if (note !== undefined) order.note = note;
+    if (items !== undefined) order.items = items;
+    if (totalAmount !== undefined) order.totalAmount = totalAmount;
+
+    await order.save();
+    const populated = await Order.findById(order._id).populate("items.product", "name code unit quantity");
+    res.json({ success: true, data: populated, message: "Cập nhật đơn hàng thành công" });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
 // UPDATE order status
 export const updateOrderStatus = async (req, res) => {
   try {
