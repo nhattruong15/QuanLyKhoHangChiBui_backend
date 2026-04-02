@@ -30,9 +30,21 @@ export const getImportById = async (req, res) => {
 // POST create import → cập nhật tồn kho
 export const createImport = async (req, res) => {
   try {
-    // Tạo mã phiếu tự động
-    const count = await Import.countDocuments();
-    const code = `PN${String(count + 1).padStart(4, "0")}`;
+    // Tạo mã phiếu tự động: lấy số lớn nhất hiện có để tránh trùng khi xóa
+    const lastImport = await Import.findOne({}, { code: 1 }).sort({ createdAt: -1 });
+    let nextNum = 1;
+    if (lastImport?.code) {
+      const match = lastImport.code.match(/\d+$/);
+      if (match) nextNum = parseInt(match[0]) + 1;
+    }
+    // Đảm bảo không trùng nếu code đó vẫn còn tồn tại
+    let code;
+    do {
+      code = `PN${String(nextNum).padStart(4, "0")}`;
+      const exists = await Import.findOne({ code });
+      if (!exists) break;
+      nextNum++;
+    } while (true);
 
     const importDoc = new Import({ ...req.body, code });
     await importDoc.save();
@@ -110,8 +122,20 @@ export const createExport = async (req, res) => {
       }
     }
 
-    const count = await Export.countDocuments();
-    const code = `PX${String(count + 1).padStart(4, "0")}`;
+    // Tạo mã phiếu tự động: lấy số lớn nhất hiện có để tránh trùng khi xóa
+    const lastExport = await Export.findOne({}, { code: 1 }).sort({ createdAt: -1 });
+    let nextExportNum = 1;
+    if (lastExport?.code) {
+      const match = lastExport.code.match(/\d+$/);
+      if (match) nextExportNum = parseInt(match[0]) + 1;
+    }
+    let code;
+    do {
+      code = `PX${String(nextExportNum).padStart(4, "0")}`;
+      const exists = await Export.findOne({ code });
+      if (!exists) break;
+      nextExportNum++;
+    } while (true);
 
     const exportDoc = new Export({ ...req.body, code });
     await exportDoc.save();
