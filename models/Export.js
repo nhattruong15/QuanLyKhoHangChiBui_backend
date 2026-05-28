@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const exportItemSchema = new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-  quantity: { type: Number, required: true, min: 1 },
+  quantity: { type: Number, required: true, min: 0 },
 });
 
 const exportSchema = new mongoose.Schema(

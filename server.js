@@ -10,6 +10,7 @@ import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 import customerRoutes from "./routes/customerRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import comboRoutes from "./routes/comboRoutes.js";
 import { protect } from "./middleware/authMiddleware.js";
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/categories", protect, categoryRoutes);
 app.use("/api/orders", protect, orderRoutes);
 app.use("/api/customers", protect, customerRoutes);
 app.use("/api/appointments", protect, appointmentRoutes);
+app.use("/api/combos", protect, comboRoutes);
 
 // ─── Start Server ─────────────────────────────────────────
 const PORT = process.env.PORT || 5000;

@@ -12,6 +12,8 @@ const productSchema = new mongoose.Schema(
     unit: { type: String, required: true }, // kg, lít, cái, túi...
     price: { type: Number, required: true, min: 0 },
     quantity: { type: Number, default: 0, min: 0 },
+    itemsPerPack: { type: Number, default: 1, min: 1 }, // số lượng lẻ trong 1 gói
+    packUnit: { type: String, default: "gói" }, // tên đơn vị đóng gói (bịch, thùng...)
     minStock: { type: Number, default: 0 }, // cảnh báo tồn kho tối thiểu
     description: { type: String },
     supplier: { type: String },
