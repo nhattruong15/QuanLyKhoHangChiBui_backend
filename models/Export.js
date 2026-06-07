@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const exportItemSchema = new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
   quantity: { type: Number, required: true, min: 0 },
+  price: { type: Number, default: 0 }, // giá bán tại thời điểm xuất
 });
 
 const exportSchema = new mongoose.Schema(
@@ -16,6 +17,7 @@ const exportSchema = new mongoose.Schema(
       default: "Bếp chính",
     },
     note: { type: String },
+    totalAmount: { type: Number, default: 0 }, // tổng tiền đơn xuất
     exportDate: { type: Date, default: Date.now },
     createdBy: { type: String, default: "Admin" },
   },

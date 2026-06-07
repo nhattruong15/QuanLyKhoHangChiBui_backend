@@ -12,6 +12,7 @@ import customerRoutes from "./routes/customerRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import comboRoutes from "./routes/comboRoutes.js";
 import { protect } from "./middleware/authMiddleware.js";
+import keepAlive from "./keepAlive.js";
 
 dotenv.config();
 
@@ -54,4 +55,8 @@ app.use("/api/combos", protect, comboRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(` Server chạy tại http://localhost:${PORT}`);
+  
+  // Khởi động cơ chế keep-alive (mỗi 20 phút)
+  const url = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+  keepAlive(url, 20);
 });

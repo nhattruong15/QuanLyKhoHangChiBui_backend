@@ -107,21 +107,9 @@ export const getExportById = async (req, res) => {
   }
 };
 
-// POST create export → trừ tồn kho
+// POST create export → trừ tồn kho (không kiểm tra tồn kho)
 export const createExport = async (req, res) => {
   try {
-    // Kiểm tra tồn kho đủ không
-    for (const item of req.body.items) {
-      const product = await Product.findById(item.product);
-      if (!product) return res.status(404).json({ success: false, message: `Sản phẩm không tồn tại` });
-      if (product.quantity < item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Sản phẩm "${product.name}" không đủ tồn kho (còn ${product.quantity} ${product.unit})`,
-        });
-      }
-    }
-
     // Tạo mã phiếu tự động: lấy số lớn nhất hiện có để tránh trùng khi xóa
     const lastExport = await Export.findOne({}, { code: 1 }).sort({ createdAt: -1 });
     let nextExportNum = 1;
@@ -137,7 +125,18 @@ export const createExport = async (req, res) => {
       nextExportNum++;
     } while (true);
 
-    const exportDoc = new Export({ ...req.body, code });
+    // Tính tổng tiền và lấy giá sản phẩm tại thời điểm xuất
+    let totalAmount = 0;
+    const itemsWithPrice = [];
+    for (const item of req.body.items) {
+      const product = await Product.findById(item.product);
+      if (!product) return res.status(404).json({ success: false, message: `Sản phẩm không tồn tại` });
+      const itemPrice = item.price !== undefined ? item.price : (product.sellingPrice || product.price || 0);
+      totalAmount += itemPrice * item.quantity;
+      itemsWithPrice.push({ ...item, price: itemPrice });
+    }
+
+    const exportDoc = new Export({ ...req.body, items: itemsWithPrice, code, totalAmount });
     await exportDoc.save();
 
     // Trừ tồn kho
@@ -147,7 +146,7 @@ export const createExport = async (req, res) => {
       });
     }
 
-    const populated = await Export.findById(exportDoc._id).populate("items.product", "name code unit");
+    const populated = await Export.findById(exportDoc._id).populate("items.product", "name code unit price sellingPrice");
     res.status(201).json({ success: true, data: populated, message: "Tạo phiếu xuất thành công" });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
