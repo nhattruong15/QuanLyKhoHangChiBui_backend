@@ -56,7 +56,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(` Server chạy tại http://localhost:${PORT}`);
   
-  // Khởi động cơ chế keep-alive (mỗi 20 phút)
+  // Khởi động keep-alive: 18:00–00:30 UTC+7, mỗi 15 phút
   const url = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
-  keepAlive(url, 20);
+  keepAlive(url);
 });
